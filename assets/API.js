@@ -43,9 +43,9 @@ var cuisineType = [
     "Asian",
     "British",
     "Caribbean",
-    "Central_Europe",
+    "Central%20Europe",
     "Chinese",
-    "Eastern_Europe",
+    "Eastern%20Europe",
     "French",
     "Indian",
     "Italian",
@@ -53,16 +53,25 @@ var cuisineType = [
     "Kosher",
     "Mediterranean",
     "Mexican",
-    "Middle_Eastern",
+    "Middle%20Eastern",
     "Nordic",
-    "South_East_Asian"
+    "South%20East%20Asian"
 ]
 
 var recipeResults;
 //Function Calls
-getRecipes(generateRecipeFetchURL()).then(recipes =>  displayRecipes(recipes))
-    //TODO: add function to display DOM Elements
-    // displayRecipes(recipes)
+// getRecipes(generateRecipeFetchURL()).then(recipes =>  displayRecipes(recipes));
+
+getRecipes(generateRecipeFetchURL()).then(recipes => {
+    displayRecipes(recipes);
+    UpdateRecipeModal(recipes[0])
+});
+
+
+
+//status code test url
+// var statusCodeURL = `https://httpstat.us/500`;
+// getRecipes(statusCodeURL).then(recipes =>  displayRecipes(recipes));
 
 function generateRecipeFetchURL() {
     var randomCuisineType = cuisineType[randomEx(0, cuisineType.length)];
@@ -76,23 +85,31 @@ function getRecipes(url) {
     var numberOfHits;
     console.log(url);
     return fetch(url)
-        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            if (!response.ok) {
+                displayErrorMessage(response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             var promises = [];
             for (var i = 0; i < 3; i++) {
                 var random = randomIn(0, data.count)
                 promises.push(fetch(`${url}&from=${random}&to=${random + 1}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        return response.json()})
                 )
             }
             return Promise.all(promises).then(datas => {
                 var recipes = [];
-                
+                console.log(datas);
                 for (var i = 0; i < 3; i++) {
                     recipes.push(datas[i].hits[0].recipe);
-                
+
                 }
-                //console.log(recipes);
+                console.log(`Inside fetch${recipes}`);
                 return recipes;
             })
         })
@@ -121,13 +138,14 @@ function logFetchRequest(url) {
 };
 
 //Simplified Exclusive Random function
-function randomEx(min, exclusiveMax) {
-    return Math.floor(Math.random() * (exclusiveMax - min)) + min;
+function randomEx(inclusiveMin, exclusiveMax) {
+    return Math.floor(Math.random() * (exclusiveMax - inclusiveMin)) + inclusiveMin;
 }
 //Simplified Inclusive Random function
-function randomIn(min, inclusiveMax) {
-    return Math.floor(Math.random() * (inclusiveMax - min) + 1) + min;
+function randomIn(exclusiveMin, inclusiveMax) {
+    return Math.floor(Math.random() * (inclusiveMax - exclusiveMin) + 1) + exclusiveMin;
 }
+
 
 // food quote - language fetch 
 
@@ -178,3 +196,4 @@ function pickLanguages(cuisineString){
         case "South%20East%20Asian": return asianLanguage[randomEx(0, asianLanguage.length)]
     }
 }
+

@@ -1,3 +1,6 @@
+var containerEl = $('.recipe-container');
+var recipeModalEl = $('#recipeModal');
+
 // DOM (array of dummy data that is expected from API to test) 
 
 // mock data array: title, cook time, ingredients, cooking instructions, pictures 
@@ -63,10 +66,15 @@ var quoteEnEl = $(`<div id="quoteEnEl">` +  `</div>`);
 
 // Recipe cards 
 function displayRecipes(recipes){
+// console.log(recipe)
+console.log(recipes)
+// recipe container(s) 
+=======
   // console.log(recipe)
   console.log(recipes);
   // recipe container(s)
   var containerEl = $('.recipe-container'); 
+
 
   // for loop (loop recipe's array)
   for (i = 0; i < 3; i++) {
@@ -103,5 +111,50 @@ function displayRecipes(recipes){
     var ingredientsContainerEl = columnEl.find('.ingredients-container');
     ingredientsContainerEl.append(ingredientsEl);
 
+    };
+};
+
+//Adds error message to page when fetch fails
+function displayErrorMessage(errorCode){
+  
+  var errorColumnEl = $(`<div class="col s12">`);
+
+  switch(errorCode){
+    case 401: 
+      errorColumnEl.text(`Sorry, we have reached our API fetch limit. Please wait 60 seconds and try again`);
+      break;
+    default:
+      errorColumnEl.text(`Sorry, we have encountered an error // Status Code: ${errorCode}`);
+      break
+  }
+  containerEl.append(errorColumnEl);
+  
+}
+
+//Updates information stored in Modal
+function UpdateRecipeModal(recipe) {
+  var modalTitleEl = $("#modal-title");
+  var modalIngredientsEl = $("#modal-ingredients");
+  var modalLinkEl = $("#modal-link");
+  var modalImageEl = $("#modal-image")
+  modalTitleEl.text(recipe.label);
+  for (i = 0; i < recipe.ingredientLines.length; i++){
+    // console.log(recipes[i].ingredientsList[j]);
+    var ingredientEl = $('<li>');
+    ingredientEl.text(recipe.ingredientLines[i]);
+
+    modalIngredientsEl.append(ingredientEl);
+  };
+  modalImageEl.attr(`src`, recipe.image);
+  modalLinkEl.text(recipe.url);
+  modalLinkEl.attr('href', recipe.url);
+}
+//Modal initializer
+$(document).ready(function(){
+  $('.modal').modal();
+});
+
+=======
   };
 };
+
